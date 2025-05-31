@@ -1,0 +1,382 @@
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHR Shop Prototype</title>
+  <style>
+    :root {
+      --blue: #004167;
+      --orange: #c55a11;
+      --light: #f9f9f9;
+      --text-color: #333;
+      --radius: 8px;
+      --font: 'Helvetica Neue', Arial, sans-serif;
+      --max-width: 800px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); color: var(--text-color); background: white; }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: white;
+      border-bottom: 1px solid #ddd;
+    }
+    .logo { font-size: 1.5rem; font-weight: bold; }
+    .logo .logo-chr { color: var(--blue); }
+    .logo .logo-shop { color: var(--orange); }
+    .search-box input {
+      width: 300px;
+      padding: 0.5rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+    }
+    .account-btn {
+      padding: 0.5rem 1rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    /* Controls & Count */
+    .list-controls {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem;
+      justify-content: center;
+    }
+    .btn-toggle {
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-active {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+    #product-count {
+      width: 100%;
+      margin: 0 0 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Products */
+    #products {
+      max-width: var(--max-width);
+      margin: 0 auto 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .product {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background: var(--light);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .product img {
+      width: 100px;
+      height: 80px;
+      background: #ddd;
+      border-radius: var(--radius);
+      margin-right: 1rem;
+    }
+    .product-info { flex: 1; }
+    .product-info h4 { margin-bottom: 0.3rem; }
+    .product-info p { font-size: 0.9rem; color: #666; margin-bottom: 0.2rem; }
+    .product-actions button {
+      padding: 0.5rem 1rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .product-actions button.btn-selected { background: var(--orange); }
+
+    /* Filter panel */
+    #filters-panel {
+      width: max-content;               /* Fit to content width */
+      background: var(--orange);
+      padding: 1rem;
+      position: fixed;
+      top: 50%;                         /* Center vertically */
+      left: 0;
+      transform: translate(-100%, -50%); /* Hide off-screen left */
+      transition: transform .3s;
+      z-index: 100;
+      height: auto;                     /* Auto height */
+      overflow: visible;                /* Ensure nothing hidden */
+    }
+    #filters-panel.open {
+      transform: translate(0, -50%);   /* Slide in, stay centered */
+    }
+    #filters-panel h3, #filters-panel h4, #filters-panel label { color: white; }
+    #filters-panel section { margin-bottom: 1.5rem; }
+    #filters-panel input[type="text"],
+    #filters-panel select,
+    #filters-panel input[type="number"] {
+      width: 100%;
+      padding: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      margin-top: 0.3rem;
+    }
+
+    /* Compare panel */
+    #compare-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 2px solid var(--blue);
+      transform: translateY(100%);
+      transition: transform .3s;
+      padding: 1rem;
+      max-height: 60%;
+      overflow: auto;
+    }
+    #compare-panel.open { transform: translateY(0); }
+    #compare-panel table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    #compare-panel th, #compare-panel td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    #compare-panel th { background: var(--light); }
+    #compare-panel .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      position: absolute;
+      top: 0.5rem;
+      right: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><span class="logo-chr">CHR</span><span class="logo-shop"> SHOP.FR</span></div>
+    <div class="search-box"><input type="text" id="search-input" placeholder="Rechercher un produit..." /></div>
+    <button class="account-btn">Compte</button>
+  </header>
+
+  <div class="list-controls">
+    <button class="btn-toggle" id="fast-delivery-btn">Livraison sous 48h</button>
+    <button class="btn-toggle" id="filters-btn">Filtres</button>
+  </div>
+  <div id="product-count"></div>
+  <main id="products"></main>
+
+  <aside id="filters-panel">
+    <h3>Filtres personnalisés</h3>
+    <section>
+      <h4>Disponibilité</h4>
+      <label><input type="checkbox" id="filter-instock" /> En stock</label>
+      <label><input type="checkbox" id="filter-fast" /> Livraison rapide</label>
+    </section>
+    <section>
+      <h4>Marque</h4>
+      <label><input type="checkbox" /> Marque A</label>
+      <label><input type="checkbox" /> Marque B</label>
+      <label><input type="checkbox" /> Marque C</label>
+    </section>
+    <section>
+      <h4>Prix (€)</h4>
+      <input type="number" id="filter-price-min" placeholder="Min" /> – <input type="number" id="filter-price-max" placeholder="Max" />
+    </section>
+    <section>
+      <h4>Condition</h4>
+      <label><input type="checkbox" id="filter-new" /> Neuf</label>
+      <label><input type="checkbox" id="filter-used" /> Occasion</label>
+    </section>
+    <section>
+      <h4>Dimensions (cm)</h4>
+      <input type="number" id="filter-width-min" placeholder="Larg. min" /> – <input type="number" id="filter-width-max" placeholder="Larg. max" /><br />
+      <input type="number" id="filter-height-min" placeholder="Haut. min" /> – <input type="number" id="filter-height-max" placeholder="Haut. max" />
+    </section>
+    <section>
+      <h4>Poids (kg)</h4>
+      <input type="number" id="filter-weight-min" placeholder="Min" /> – <input type="number" id="filter-weight-max" placeholder="Max" />
+    </section>
+    <section>
+      <h4>Étiquette énergétique</h4>
+      <select id="filter-energy">
+        <option value="">Toutes</option>
+        <option value="A+++">A+++</option>
+        <option value="A++">A++</option>
+        <option value="A+">A+</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+      </select>
+    </section>
+    <section>
+      <h4>Couleur</h4>
+      <label><input type="checkbox" class="filter-color" value="Blanc" /> Blanc</label>
+      <label><input type="checkbox" class="filter-color" value="Inox" /> Inox</label>
+      <label><input type="checkbox" class="filter-color" value="Noir" /> Noir</label>
+    </section>
+  </aside>
+
+  <div id="compare-panel">
+    <button class="close-btn" id="compare-close">×</button>
+    <h3>Comparer les prix</h3>
+    <div id="compare-content"></div>
+  </div>
+
+  <script>
+    const productsEl = document.getElementById('products');
+    const filtersBtn = document.getElementById('filters-btn');
+    const filtersPanel = document.getElementById('filters-panel');
+    const fastBtn = document.getElementById('fast-delivery-btn');
+    const comparePanel = document.getElementById('compare-panel');
+    const compareContent = document.getElementById('compare-content');
+    const closeCompare = document.getElementById('compare-close');
+    const countEl = document.getElementById('product-count');
+
+    // Filter inputs
+    const filterInstock = document.getElementById('filter-instock');
+    const filterFast = document.getElementById('filter-fast');
+    const filterPriceMin = document.getElementById('filter-price-min');
+    const filterPriceMax = document.getElementById('filter-price-max');
+    const filterNew = document.getElementById('filter-new');
+    const filterUsed = document.getElementById('filter-used');
+    const filterWidthMin = document.getElementById('filter-width-min');
+    const filterWidthMax = document.getElementById('filter-width-max');
+    const filterHeightMin = document.getElementById('filter-height-min');
+    const filterHeightMax = document.getElementById('filter-height-max');
+    const filterWeightMin = document.getElementById('filter-weight-min');
+    const filterWeightMax = document.getElementById('filter-weight-max');
+    const filterEnergy = document.getElementById('filter-energy');
+    const filterColors = document.querySelectorAll('.filter-color');
+
+    const colors = ['Blanc', 'Inox', 'Noir'];
+    const deliveryOptions = ['Aujourd’hui', 'Sous 48h', '5 jours', '7 jours', '1 mois'];
+    const energyRanks = ['A+++','A++','A+','A','B'];
+
+    const data = Array.from({length:20}, (_,i) => ({
+      id: i+1,
+      title: 'Lave-vaisselle',
+      instock: Math.random()<0.8,
+      newOrUsed: Math.random()<0.7?'Neuf':'Occasion',
+      color: colors[Math.floor(Math.random()*colors.length)],
+      delivery: deliveryOptions[Math.floor(Math.random()*deliveryOptions.length)],
+      width: Math.floor(50 + Math.random()*50),
+      height: Math.floor(50 + Math.random()*50),
+      weight: Math.floor(20 + Math.random()*30),
+      energy: energyRanks[Math.floor(Math.random()*energyRanks.length)],
+      price: 1600 + (i+1)*5
+    }));
+
+    let compareList = [];
+    function applyFilters(item) {
+      if(filterInstock.checked && !item.instock) return false;
+      if(filterFast.checked && !(item.delivery==='Aujourd’hui'||item.delivery==='Sous 48h')) return false;
+      const minP=filterPriceMin.valueAsNumber, maxP=filterPriceMax.valueAsNumber;
+      if(minP&&!isNaN(minP)&&item.price<minP) return false;
+      if(maxP&&!isNaN(maxP)&&item.price>maxP) return false;
+      if(filterNew.checked&&item.newOrUsed!=='Neuf') return false;
+      if(filterUsed.checked&&item.newOrUsed!=='Occasion') return false;
+      const minW=filterWidthMin.valueAsNumber, maxW=filterWidthMax.valueAsNumber;
+      if(minW&&!isNaN(minW)&&item.width<minW) return false;
+      if(maxW&&!isNaN(maxW)&&item.width>maxW) return false;
+      const minH=filterHeightMin.valueAsNumber, maxH=filterHeightMax.valueAsNumber;
+      if(minH&&!isNaN(minH)&&item.height<minH) return false;
+      if(maxH&&!isNaN(maxH)&&item.height>maxH) return false;
+      const minWt=filterWeightMin.valueAsNumber, maxWt=filterWeightMax.valueAsNumber;
+      if(minWt&&!isNaN(minWt)&&item.weight<minWt) return false;
+      if(maxWt&&!isNaN(maxWt)&&item.weight>maxWt) return false;
+      const en=filterEnergy.value;
+      if(en&&energyRanks.indexOf(item.energy)>energyRanks.indexOf(en)) return false;
+      const selectedCols=[...filterColors].filter(c=>c.checked).map(c=>c.value);
+      if(selectedCols.length&&!selectedCols.includes(item.color)) return false;
+      return true;
+    }
+
+    function renderProducts() {
+      productsEl.innerHTML = '';
+      const filtered = data.filter(applyFilters);
+      countEl.textContent = `${filtered.length} produits trouvés`;
+      filtered.forEach((p, idx) => {
+        const div = document.createElement('div'); div.className='product';
+        div.innerHTML = `
+          <img alt="Image produit" />
+          <div class="product-info">
+            <h4>${p.title} ${idx+1}</h4>
+            <p><strong>Couleur:</strong> ${p.color}</p>
+            <p><strong>Expédié :</strong> ${p.delivery}</p>
+            <p><strong>Dimensions:</strong> ${p.width}×${p.height} cm</p>
+            <p><strong>Poids:</strong> ${p.weight} kg</p>
+            <p><strong>Énergie:</strong> ${p.energy}</p>
+            <p><strong>Condition:</strong> ${p.newOrUsed}</p>
+            <p><strong>Prix:</strong> ${p.price} €</p>
+          </div>
+          <div class="product-actions">
+            <button data-id="${p.id}">${compareList.includes(p.id)?'Retirer':'Comparer'}</button>
+          </div>`;
+        const btn = div.querySelector('button');
+        if(compareList.includes(p.id)) btn.classList.add('btn-selected');
+        btn.onclick = () => toggleCompare(p.id);
+        productsEl.append(div);
+      });
+    }
+
+    function toggleCompare(id) {
+      const idx = compareList.indexOf(id);
+      if(idx > -1) compareList.splice(idx, 1);
+      else if(compareList.length < 5) compareList.push(id);
+      renderProducts();
+      if(compareList.length) openCompare(); else comparePanel.classList.remove('open');
+    }
+
+    function openCompare() {
+      let html = '<table><tr><th></th>'; // empty header for specs column
+      compareList.forEach((id, i) => {
+        const p = data.find(d => d.id === id);
+        html += `<th>${p.title} ${i+1}</th>`;
+      });
+      html += '</tr>';
+      [['Couleur','color'],['Expédié','delivery'],['Dimensions','width'],['Poids','weight'],['Énergie','energy'],['Condition','newOrUsed'],['Prix','price']]
+        .forEach(([lbl, key]) => {
+          html += `<tr><td>${lbl}</td>` + compareList.map(id => {
+            let v = data.find(d => d.id === id)[key];
+            return `<td>${key === 'price' ? v + ' €' : v}</td>`;
+          }).join('') + '</tr>';
+      });
+      html += '</table>';
+      compareContent.innerHTML = html;
+      comparePanel.classList.add('open');
+    }
+
+    filtersBtn.onclick = () => filtersPanel.classList.toggle('open');
+    fastBtn.onclick = () => { filterFast.checked = !filterFast.checked; fastBtn.classList.toggle('btn-active'); renderProducts(); };
+    closeCompare.onclick = () => comparePanel.classList.remove('open');
+
+    [filterInstock, filterFast, filterPriceMin, filterPriceMax, filterNew, filterUsed, filterWidthMin, filterWidthMax, filterHeightMin, filterHeightMax, filterWeightMin, filterWeightMax, filterEnergy].forEach(el => el.onchange = renderProducts);
+    filterColors.forEach(ch => ch.onchange = renderProducts);
+
+    renderProducts();
+  </script>
+</body>
+</html>
