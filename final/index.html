@@ -1,0 +1,1397 @@
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHR Shop Prototype</title>
+  <!-- Font Awesome pour icônes -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-pVn0mY8EG3YvvvYZ+9u2iFA6wVwZxDxEdZ6rIlyYHrHGXebcIVcgFJvorF0XEnMZgVv2I+Lp5VjGhbl6X8KkyA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <!-- Ion.RangeSlider pour le slider de prix -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/css/ion.rangeSlider.min.css"
+  />
+  <style>
+    :root {
+      --blue: #004167;
+      --blue-dark: #00304A;
+      --orange: #c55a11;
+      --orange-dark: #A0460D;
+      --light: #f9f9f9;
+      --gray-light: #EEEEEE;
+      --gray-mid: #666;
+      --text-color: #333;
+      --radius: 8px;
+      --font: 'Helvetica Neue', Arial, sans-serif;
+      --max-width: calc(100% - 500px);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ---- 1) ZOOM 75% sur écrans ≥ 1200px ---- */
+    @media screen and (min-width: 1200px) {
+      body {
+        zoom: 0.75;
+        -moz-transform: scale(0.75);
+        -moz-transform-origin: top left;
+        transform-origin: top left;
+      }
+    }
+
+    /* ---- 2) Style normal du body (après zoom) ---- */
+    body {
+      font-family: var(--font);
+      color: var(--text-color);
+      background: white;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Header fixe */
+    header {
+      position: sticky;
+      top: 0;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border-bottom: 1px solid #ddd;
+      z-index: 1000;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .logo .logo-chr {
+      color: var(--blue);
+    }
+    .logo .logo-shop {
+      color: var(--orange);
+    }
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 400px;
+      margin: 0 1rem;
+    }
+    .search-box .icon-search {
+      position: absolute;
+      top: 50%;
+      left: 0.8rem;
+      transform: translateY(-50%);
+      color: var(--gray-mid);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      font-size: 1rem;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 4px rgba(0, 65, 103, 0.3);
+    }
+    .contact-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      color: var(--gray-mid);
+      margin-right: 1rem;
+    }
+    .contact-info i {
+      color: var(--blue);
+    }
+    .account-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .account-btn i {
+      font-size: 1rem;
+    }
+    .account-btn:hover {
+      background: var(--blue-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      height: 320px;
+      background: url('https://images.pexels.com/photos/298311/pexels-photo-298311.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940')
+        center/cover no-repeat;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 65, 103, 0.4);
+    }
+    .hero-content {
+      position: relative;
+      color: #fff;
+      text-align: center;
+      top: 50%;
+      transform: translateY(-50%);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      padding: 0 1rem;
+    }
+    .hero-content h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .hero-content p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--orange);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Panneau Filtres (à gauche) */
+    #filters-panel {
+      width: 240px;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: var(--orange);
+      padding: 1rem;
+      position: fixed;
+      top: 50%;
+      left: 0;
+      transform: translate(0, -50%);
+      z-index: 100;
+      border-top-right-radius: var(--radius);
+      border-bottom-right-radius: var(--radius);
+    }
+    #filters-panel h3 {
+      color: #fff;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #filters-panel h3 .icon-filter {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+    #filters-panel h4 {
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    #filters-panel h4 .icon-section {
+      font-size: 1rem;
+      color: #fff;
+    }
+    #filters-panel section {
+      margin-bottom: 1.5rem;
+    }
+    #filters-panel input[type='checkbox'] {
+      opacity: 0;
+      position: absolute;
+    }
+    .custom-checkbox {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-radius: 3px;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    #filters-panel label {
+      display: flex;
+      align-items: center;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      position: relative;
+      padding-left: 24px;
+      cursor: pointer;
+    }
+    #filters-panel label input:checked + .custom-checkbox {
+      background: #fff;
+      border-color: #fff;
+    }
+    #filters-panel input[type='number'],
+    #filters-panel select {
+      width: 100%;
+      padding: 0.4rem;
+      border: none;
+      border-radius: var(--radius);
+      margin-top: 0.3rem;
+      font-size: 0.95rem;
+    }
+    #filters-panel input[type='number']:focus,
+    #filters-panel select:focus {
+      outline: none;
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+    }
+    .price-slider-container {
+      margin-top: 0.5rem;
+    }
+    .swatch-circle {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      margin-right: 0.4rem;
+      vertical-align: middle;
+    }
+    .swatch-circle.White { background: #fff; }
+    .swatch-circle.Inox { background: linear-gradient(135deg, #e0e0e0, #a5a5a5); }
+    .swatch-circle.Noir { background: #333; }
+    .filter-color-label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      padding-left: 24px;
+      color: #fff;
+    }
+    .filter-color-label input {
+      opacity: 0;
+      position: absolute;
+    }
+    .filter-color-label input:checked + .swatch-circle {
+      box-shadow: 0 0 0 2px var(--blue);
+    }
+    .icon-availability { font-size: 1rem; color: #fff; }
+    .icon-brand { font-size: 1rem; color: #fff; }
+    .icon-price { font-size: 1rem; color: #fff; }
+    .icon-condition { font-size: 1rem; color: #fff; }
+    .icon-dimensions { font-size: 1rem; color: #fff; }
+    .icon-weight { font-size: 1rem; color: #fff; }
+    .icon-energy { font-size: 1rem; color: #fff; }
+    .icon-color { font-size: 1rem; color: #fff; }
+
+    /* Panneau Panier (à droite) */
+    #basket-panel {
+      width: 260px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--gray-light);
+      padding: 1rem;
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translate(0, -50%);
+      z-index: 100;
+      border-top-left-radius: var(--radius);
+      border-bottom-left-radius: var(--radius);
+      border-left: 1px solid #ccc;
+    }
+    #basket-panel h3 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #basket-panel h3 .icon-cart {
+      font-size: 1.2rem;
+      color: var(--blue);
+    }
+    .basket-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      background: #fff;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+    .basket-item img {
+      width: 50px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      margin-right: 0.5rem;
+      background: #ddd;
+    }
+    .basket-item .item-info {
+      flex: 2;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+    .basket-item .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-left: 0.5rem;
+    }
+    /* Boutons “−” et “+” en texte pour garantir la visibilité */
+    .basket-item .qty-controls button {
+      background: #fff;
+      color: var(--blue);
+      border: 1px solid var(--blue);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 1rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+    .basket-item .qty-controls button:hover {
+      background: var(--blue);
+      color: #fff;
+    }
+    .basket-item .qty-controls input {
+      width: 32px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      padding: 2px;
+      background: #fff;
+    }
+
+    /* Bouton poubelle visible */
+    .basket-item .remove-btn {
+      background: none;
+      border: none;
+      color: var(--blue);
+      cursor: pointer;
+      font-size: 1.2rem;
+      margin-left: 0.5rem;
+      transition: color 0.2s;
+    }
+    .basket-item .remove-btn:hover {
+      color: var(--blue-dark);
+    }
+
+    #basket-panel .empty-basket {
+      text-align: center;
+      color: var(--gray-mid);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    /* Nouvelle zone pied de panier : Pay + Total */
+    .basket-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #ccc;
+    }
+    .basket-footer .pay-all-btn {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.4rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .basket-footer .pay-all-btn:hover {
+      background: var(--blue-dark);
+    }
+    #basket-total {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--text-color);
+    }
+
+    /* Panneau Comparaison (en bas) */
+    #compare-panel {
+      position: fixed;
+      bottom: 0;
+      left: 260px;
+      right: 280px;
+      background: #fff;
+      border-top: 2px solid var(--blue);
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
+      padding-top: 2rem; /* calibré pour nouveau header plus réduit */
+      max-height: 50vh;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+    }
+    #compare-panel.open {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    /* Header du comparateur (plus compact) */
+    .compare-header {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding: 0.5rem 1rem; /* réduit par rapport à 1rem */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      z-index: 2;
+    }
+    .compare-header h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem; /* plus petit qu’avant */
+    }
+    .compare-header h3 .icon-compare {
+      font-size: 1rem;
+      color: var(--blue);
+    }
+    .compare-header .close-btn {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .compare-header .close-btn:hover {
+      color: var(--orange);
+    }
+    #compare-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    #compare-content th,
+    #compare-content td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    #compare-content th {
+      background: var(--light);
+      position: sticky;
+      top: 2rem; /* juste sous le header réduit */
+      z-index: 1;
+    }
+    #compare-content tr:nth-child(odd) {
+      background: var(--gray-light);
+    }
+
+    /* Main content wrapper */
+    .main-content {
+      margin-left: 260px;
+      margin-right: 280px;
+      padding-top: 1rem;
+      padding-bottom: 2rem;
+    }
+
+    /* Controls & Count */
+    .list-controls {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-toggle i {
+      font-size: 1rem;
+      color: var(--blue);
+    }
+    .btn-toggle:hover {
+      transform: translateY(-2px);
+    }
+    .btn-active {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+    .btn-active i {
+      color: #fff;
+    }
+    #product-count {
+      width: 100%;
+      text-align: center;
+      font-size: 1rem;
+      color: var(--gray-mid);
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    #product-count i {
+      color: var(--blue);
+      font-size: 1rem;
+    }
+
+    /* Produits en grille */
+    #products {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      justify-items: center;
+    }
+    .product {
+      width: 100%;
+      background: var(--light);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .product:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: #ddd;
+    }
+    .badge-new {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      background: var(--orange);
+      color: #fff;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.75rem;
+      font-weight: bold;
+      transform: rotate(-15deg);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .product-info {
+      padding: 0.8rem 1rem;
+    }
+    .brand-label {
+      font-size: 0.9rem;
+      color: var(--gray-mid);
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .brand-label .icon-brand {
+      color: var(--blue);
+    }
+    .product-info h4 {
+      margin-bottom: 0.4rem;
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+    .star-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: #f0ad4e;
+    }
+    .star-rating i {
+      color: gold;
+    }
+    .voir-avis {
+      background: none;
+      border: none;
+      color: var(--blue);
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+    }
+    .voir-avis i {
+      font-size: 0.9rem;
+    }
+    .voir-avis:hover {
+      color: var(--orange);
+    }
+    .reviews {
+      max-height: 0;
+      overflow: hidden;
+      background: #fff;
+      padding: 0 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      line-height: 1.3;
+      transition: max-height 0.3s ease;
+    }
+    .reviews.open {
+      max-height: 200px;
+      padding: 0.5rem 0.8rem;
+    }
+    .product-info p {
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .product-info p i {
+      width: 16px;
+      text-align: center;
+      color: var(--blue);
+    }
+    .add-cart-btn {
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .add-cart-btn i {
+      font-size: 1rem;
+    }
+    .add-cart-btn:hover {
+      background: var(--blue-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .price-tag {
+      background: var(--orange);
+      color: #fff;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      white-space: nowrap;
+    }
+    /* Checkbox Comparer en bas à droite + étiquette texte */
+    .compare-checkbox {
+      position: absolute;
+      bottom: 0.8rem;
+      right: 0.8rem;
+      transform: scale(1.3);
+      cursor: pointer;
+    }
+    .compare-label-text {
+      position: absolute;
+      bottom: 0.7rem;
+      right: 2.6rem; /* à gauche de la checkbox */
+      font-size: 0.75rem;
+      color: var(--gray-mid);
+      cursor: pointer;
+    }
+
+    @media (max-width: 1200px) {
+      .main-content {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1rem;
+      }
+      #filters-panel,
+      #basket-panel {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header : logo, recherche, contact, compte -->
+  <header>
+    <div class="logo">
+      <span class="logo-chr">CHR</span><span class="logo-shop"> SHOP.FR</span>
+    </div>
+    <div class="search-box">
+      <i class="fas fa-search icon-search"></i>
+      <input type="text" id="search-input" placeholder="Rechercher un produit..." />
+    </div>
+    <div class="contact-info">
+      <i class="fas fa-phone"></i> +33 1 23 45 67 89
+      <i class="fas fa-envelope"></i> contact@chrshop.fr
+    </div>
+    <button class="account-btn"><i class="fas fa-user"></i> Compte</button>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Équipez votre cuisine pro avec CHR SHOP.FR</h1>
+      <p>Des produits fiables, des livraisons sous 48 h, et un service dédié.</p>
+      <!-- Bouton mis à jour avec l’ID pour appliquer le filtre livraison 48 h -->
+      <button id="show-selection-btn" class="btn-primary">Voir la sélection</button>
+    </div>
+  </section>
+
+  <!-- Filters Panel (à gauche) -->
+  <aside id="filters-panel">
+    <h3><i class="fas fa-filter icon-filter"></i> Filtres personnalisés</h3>
+
+    <section>
+      <h4><i class="fas fa-check-circle icon-section icon-availability"></i> Disponibilité</h4>
+      <label>
+        <input type="checkbox" id="filter-instock" />
+        <span class="custom-checkbox"></span> En stock
+      </label>
+      <label>
+        <input type="checkbox" id="filter-fast" />
+        <span class="custom-checkbox"></span> Livraison rapide
+      </label>
+    </section>
+
+    <section>
+      <h4><i class="fas fa-tag icon-section icon-brand"></i> Marque</h4>
+      <label>
+        <input type="checkbox" id="filter-brand-a" value="Marque A" />
+        <span class="custom-checkbox"></span> Marque A
+      </label>
+      <label>
+        <input type="checkbox" id="filter-brand-b" value="Marque B" />
+        <span class="custom-checkbox"></span> Marque B
+      </label>
+      <label>
+        <input type="checkbox" id="filter-brand-c" value="Marque C" />
+        <span class="custom-checkbox"></span> Marque C
+      </label>
+    </section>
+
+    <section>
+      <h4><i class="fas fa-euro-sign icon-section icon-price"></i> Prix (€)</h4>
+      <div class="price-slider-container">
+        <input
+          type="text"
+          id="price-slider"
+          name="price-slider"
+          value=""
+        />
+      </div>
+      <div style="display:flex; justify-content: space-between; font-size:0.85rem; color:#fff; margin-top:0.3rem;">
+        <span id="price-min-label">Min : 0 €</span>
+        <span id="price-max-label">Max : 3000 €</span>
+      </div>
+    </section>
+
+    <section>
+      <h4><i class="fas fa-box-open icon-section icon-condition"></i> Condition</h4>
+      <label>
+        <input type="checkbox" id="filter-new" />
+        <span class="custom-checkbox"></span> Neuf
+      </label>
+      <label>
+        <input type="checkbox" id="filter-used" />
+        <span class="custom-checkbox"></span> Occasion
+      </label>
+    </section>
+
+    <section>
+      <h4><i class="fas fa-ruler-combined icon-section icon-dimensions"></i> Dimensions (cm)</h4>
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
+        <input
+          type="number"
+          id="filter-height-min"
+          placeholder="Haut. min"
+        />
+        <input
+          type="number"
+          id="filter-height-max"
+          placeholder="Haut. max"
+        />
+      </div>
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
+        <input
+          type="number"
+          id="filter-width-min"
+          placeholder="Larg. min"
+        />
+        <input
+          type="number"
+          id="filter-width-max"
+          placeholder="Larg. max"
+        />
+      </div>
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
+        <input
+          type="number"
+          id="filter-depth-min"
+          placeholder="Prof. min"
+        />
+        <input
+          type="number"
+          id="filter-depth-max"
+          placeholder="Prof. max"
+        />
+      </div>
+    </section>
+
+    <section>
+      <h4><i class="fas fa-weight icon-section icon-weight"></i> Poids (kg)</h4>
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
+        <input
+          type="number"
+          id="filter-weight-min"
+          placeholder="Min"
+        />
+        <input
+          type="number"
+          id="filter-weight-max"
+          placeholder="Max"
+        />
+      </div>
+    </section>
+
+    <section>
+      <h4><i class="fas fa-bolt icon-section icon-energy"></i> Étiquette énergétique</h4>
+      <select id="filter-energy">
+        <option value="">Toutes</option>
+        <option value="A+++">A+++</option>
+        <option value="A++">A++</option>
+        <option value="A+">A+</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+      </select>
+    </section>
+
+    <section>
+      <h4><i class="fas fa-fill-drip icon-section icon-color"></i> Couleur</h4>
+      <label class="filter-color-label">
+        <input type="checkbox" class="filter-color" value="Blanc" />
+        <span class="swatch-circle Blanc"></span> Blanc
+      </label>
+      <label class="filter-color-label">
+        <input type="checkbox" class="filter-color" value="Inox" />
+        <span class="swatch-circle Inox"></span> Inox
+      </label>
+      <label class="filter-color-label">
+        <input type="checkbox" class="filter-color" value="Noir" />
+        <span class="swatch-circle Noir"></span> Noir
+      </label>
+    </section>
+  </aside>
+
+  <!-- Basket Panel (à droite) -->
+  <aside id="basket-panel">
+    <h3><i class="fas fa-shopping-cart icon-cart"></i> Panier</h3>
+    <div id="basket-items"></div>
+
+    <!-- Pied de panier : bouton “Payer” global et total -->
+    <div class="basket-footer">
+      <button id="pay-all-btn" class="pay-all-btn">Payer</button>
+      <div id="basket-total">Total : 0 €</div>
+    </div>
+  </aside>
+
+  <!-- Compare Panel (en bas) -->
+  <div id="compare-panel">
+    <div class="compare-header">
+      <h3><i class="fas fa-balance-scale-left icon-compare"></i> Comparer les prix</h3>
+      <button class="close-btn" id="compare-close">×</button>
+    </div>
+    <div id="compare-content"></div>
+  </div>
+
+  <!-- Main content (produits et contrôles) -->
+  <div class="main-content">
+    <div class="list-controls">
+      <button class="btn-toggle" id="fast-delivery-btn">
+        <i class="fas fa-truck"></i> Livraison sous 48 h
+      </button>
+      <button class="btn-toggle" id="show-filters-btn">
+        <i class="fas fa-filter"></i> Filtres
+      </button>
+      <button class="btn-toggle" id="show-basket-btn">
+        <i class="fas fa-shopping-cart"></i> Panier
+      </button>
+    </div>
+    <div id="product-count">
+      <i class="fas fa-box-open"></i> <span id="count-text">0 produits trouvés</span>
+    </div>
+    <div id="products"></div>
+  </div>
+
+  <!-- Inputs cachés pour gamme prix -->
+  <input type="hidden" id="filter-price-min" value="0" />
+  <input type="hidden" id="filter-price-max" value="3000" />
+
+  <!-- jQuery requis pour Ion.RangeSlider -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- Ion.RangeSlider -->
+  <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
+  <script>
+    // Initialisation du slider, mise à jour au relâché (onFinish)
+    const priceSlider   = document.getElementById('price-slider');
+    const priceMinLabel = document.getElementById('price-min-label');
+    const priceMaxLabel = document.getElementById('price-max-label');
+    $(priceSlider).ionRangeSlider({
+      type: 'double',
+      min: 0,
+      max: 3000,
+      from: 0,
+      to: 3000,
+      step: 50,
+      prefix: '',
+      postfix: ' €',
+      grid: false,
+      onFinish: function(data) {
+        priceMinLabel.textContent = 'Min : ' + data.from + ' €';
+        priceMaxLabel.textContent = 'Max : ' + data.to + ' €';
+        document.getElementById('filter-price-min').value = data.from;
+        document.getElementById('filter-price-max').value = data.to;
+        renderProducts();
+      },
+    });
+
+    // Références éléments
+    const productsEl        = document.getElementById('products');
+    const fastBtn           = document.getElementById('fast-delivery-btn');
+    const countText         = document.getElementById('count-text');
+    const basketItemsEl     = document.getElementById('basket-items');
+    const basketTotalEl     = document.getElementById('basket-total');
+    const comparePanel      = document.getElementById('compare-panel');
+    const compareCloseBtn   = document.getElementById('compare-close');
+    const compareContentDiv = document.getElementById('compare-content');
+    const payAllBtn         = document.getElementById('pay-all-btn');
+
+    const showFiltersBtn    = document.getElementById('show-filters-btn');
+    const showBasketBtn     = document.getElementById('show-basket-btn');
+    const filtersPanel      = document.getElementById('filters-panel');
+    const basketPanel       = document.getElementById('basket-panel');
+
+    // Inputs filtres
+    const filterInstock     = document.getElementById('filter-instock');
+    const filterFast        = document.getElementById('filter-fast');
+    const filterBrandA      = document.getElementById('filter-brand-a');
+    const filterBrandB      = document.getElementById('filter-brand-b');
+    const filterBrandC      = document.getElementById('filter-brand-c');
+    const filterPriceMin    = document.getElementById('filter-price-min');
+    const filterPriceMax    = document.getElementById('filter-price-max');
+    const filterNew         = document.getElementById('filter-new');
+    const filterUsed        = document.getElementById('filter-used');
+    const filterHeightMin   = document.getElementById('filter-height-min');
+    const filterHeightMax   = document.getElementById('filter-height-max');
+    const filterWidthMin    = document.getElementById('filter-width-min');
+    const filterWidthMax    = document.getElementById('filter-width-max');
+    const filterDepthMin    = document.getElementById('filter-depth-min');
+    const filterDepthMax    = document.getElementById('filter-depth-max');
+    const filterWeightMin   = document.getElementById('filter-weight-min');
+    const filterWeightMax   = document.getElementById('filter-weight-max');
+    const filterEnergy      = document.getElementById('filter-energy');
+    const filterColors      = document.querySelectorAll('.filter-color');
+
+    // Bouton “Voir la sélection”
+    const showSelectionBtn = document.getElementById('show-selection-btn');
+
+    const colors = ['Blanc','Inox','Noir'];
+    const deliveryOptions = ['Aujourd’hui','Sous 48 h','5 jours','7 jours','1 mois'];
+    const energyRanks = ['A+++','A++','A+','A','B'];
+    const brands = ['Marque A','Marque B','Marque C'];
+
+    // Données de démonstration (20 produits)
+    const data = Array.from({length: 20}, (_, i) => ({
+      id: i + 1,
+      title: 'Lave-vaisselle',
+      brand: brands[Math.floor(Math.random()*brands.length)],
+      instock: Math.random() < 0.8,
+      newOrUsed: Math.random() < 0.7 ? 'Neuf' : 'Occasion',
+      color: colors[Math.floor(Math.random()*colors.length)],
+      delivery: deliveryOptions[Math.floor(Math.random()*deliveryOptions.length)],
+      height: Math.floor(75 + Math.random()*20),
+      width: Math.floor(50 + Math.random()*50),
+      depth: Math.floor(50 + Math.random()*20),
+      weight: Math.floor(20 + Math.random()*30),
+      energy: energyRanks[Math.floor(Math.random()*energyRanks.length)],
+      consumption: Math.floor(150 + Math.random()*150),
+      price: 500 + Math.floor(Math.random()*2500),
+      rating: (Math.random()*2 + 3).toFixed(1),
+      reviews: [
+        { user: 'Alice', comment: 'Très bon produit, fonctionne parfaitement.' },
+        { user: 'Bob', comment: 'Un peu bruyant mais efficace.' },
+        { user: 'Claire', comment: 'Excellente consommation énergétique.' }
+      ]
+    }));
+
+    // Structure panier : { id, qty }
+    let basketList = [];
+    // Liste de comparaison (IDs seuls)
+    let compareList = [];
+
+    function applyFilters(item) {
+      if (filterInstock.checked && !item.instock) return false;
+      if (filterFast.checked && !(item.delivery === 'Aujourd’hui' || item.delivery === 'Sous 48 h')) return false;
+
+      const selectedBrands = [];
+      if (filterBrandA.checked) selectedBrands.push('Marque A');
+      if (filterBrandB.checked) selectedBrands.push('Marque B');
+      if (filterBrandC.checked) selectedBrands.push('Marque C');
+      if (selectedBrands.length && !selectedBrands.includes(item.brand)) return false;
+
+      const minP = Number(filterPriceMin.value);
+      const maxP = Number(filterPriceMax.value);
+      if (!isNaN(minP) && item.price < minP) return false;
+      if (!isNaN(maxP) && item.price > maxP) return false;
+
+      if (filterNew.checked && item.newOrUsed !== 'Neuf') return false;
+      if (filterUsed.checked && item.newOrUsed !== 'Occasion') return false;
+
+      const minH = filterHeightMin.valueAsNumber;
+      const maxH = filterHeightMax.valueAsNumber;
+      if (!isNaN(minH) && item.height < minH) return false;
+      if (!isNaN(maxH) && item.height > maxH) return false;
+
+      const minW = filterWidthMin.valueAsNumber;
+      const maxW = filterWidthMax.valueAsNumber;
+      if (!isNaN(minW) && item.width < minW) return false;
+      if (!isNaN(maxW) && item.width > maxW) return false;
+
+      const minD = filterDepthMin.valueAsNumber;
+      const maxD = filterDepthMax.valueAsNumber;
+      if (!isNaN(minD) && item.depth < minD) return false;
+      if (!isNaN(maxD) && item.depth > maxD) return false;
+
+      const minWt = filterWeightMin.valueAsNumber;
+      const maxWt = filterWeightMax.valueAsNumber;
+      if (!isNaN(minWt) && item.weight < minWt) return false;
+      if (!isNaN(maxWt) && item.weight > maxWt) return false;
+
+      const en = filterEnergy.value;
+      if (en && energyRanks.indexOf(item.energy) > energyRanks.indexOf(en)) return false;
+
+      const selectedCols = Array.from(filterColors)
+        .filter(c => c.checked)
+        .map(c => c.value);
+      if (selectedCols.length && !selectedCols.includes(item.color)) return false;
+
+      return true;
+    }
+
+    function renderProducts() {
+      productsEl.innerHTML = '';
+      const filtered = data.filter(applyFilters);
+      countText.textContent = `${filtered.length} produits trouvés`;
+
+      filtered.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.className = 'product';
+
+        /* Affiche la bannière "NOUVEAU" uniquement pour les 5 premiers produits */
+        const badgeHtml = (idx < 5)
+          ? `<div class="badge-new">NOUVEAU</div>`
+          : '';
+
+        div.innerHTML = `
+          ${badgeHtml}
+          <input
+            type="checkbox"
+            class="compare-checkbox"
+            data-id="${p.id}"
+            id="compare-${p.id}"
+            title="Cocher pour comparer"
+          />
+          <label for="compare-${p.id}" class="compare-label-text">Comparer</label>
+          <img alt="Image produit" src="https://via.placeholder.com/280x180.png?text=Produit+${idx + 1}" />
+          <div class="product-info">
+            <div class="brand-label"><i class="fas fa-tag"></i> ${p.brand}</div>
+            <h4>${p.title} ${idx + 1}</h4>
+            <div class="star-rating">
+              ${renderStars(p.rating)} <span>(${p.rating})</span>
+            </div>
+            <button class="voir-avis"><i class="fas fa-comment-dots"></i> Voir les avis</button>
+            <div class="reviews">
+              ${p.reviews.map(r => `<strong>${r.user} :</strong> ${r.comment}<br />`).join('')}
+            </div>
+            <p><i class="fas fa-fill-drip"></i> <strong>Couleur :</strong> ${p.color}</p>
+            <p><i class="fas fa-truck"></i> <strong>Expédié :</strong> ${p.delivery}</p>
+            <p><i class="fas fa-ruler-combined"></i> <strong>Dimensions :</strong> ${p.height}×${p.width}×${p.depth} cm</p>
+            <p><i class="fas fa-weight"></i> <strong>Poids :</strong> ${p.weight} kg</p>
+            <p><i class="fas fa-bolt"></i> <strong>Énergie :</strong> ${p.energy}</p>
+            <p><i class="fas fa-tachometer-alt"></i> <strong>Consommation annuelle :</strong> ${p.consumption} kWh</p>
+            <p><i class="fas fa-box-open"></i> <strong>Condition :</strong> ${p.newOrUsed}</p>
+            <button class="add-cart-btn" data-id="${p.id}"><i class="fas fa-shopping-cart"></i> Ajouter au panier</button>
+          </div>
+          <div class="price-tag">${p.price} €</div>
+        `;
+        productsEl.append(div);
+
+        // Événements
+        const checkbox    = div.querySelector('.compare-checkbox');
+        const voirAvisBtn = div.querySelector('.voir-avis');
+        const reviewsDiv  = div.querySelector('.reviews');
+        const addCartBtn  = div.querySelector('.add-cart-btn');
+
+        checkbox.onchange = () => toggleCompare(p.id);
+        voirAvisBtn.onclick = () => reviewsDiv.classList.toggle('open');
+        addCartBtn.onclick = () => addToBasket(p.id);
+      });
+    }
+
+    function renderStars(rating) {
+      const r = parseFloat(rating);
+      const fullStars = Math.floor(r);
+      const halfStar = r - fullStars >= 0.5;
+      let html = '';
+      for (let i = 0; i < fullStars; i++) {
+        html += '<i class="fas fa-star"></i>';
+      }
+      if (halfStar) {
+        html += '<i class="fas fa-star-half-alt"></i>';
+      }
+      const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+      for (let i = 0; i < emptyStars; i++) {
+        html += '<i class="far fa-star"></i>';
+      }
+      return html;
+    }
+
+    function toggleCompare(id) {
+      const idx = compareList.indexOf(id);
+      if (idx > -1) compareList.splice(idx, 1);
+      else if (compareList.length < 5) compareList.push(id);
+      renderCompareBar();
+    }
+
+    function renderCompareBar() {
+      if (compareList.length === 0) {
+        comparePanel.classList.remove('open');
+        return;
+      }
+      openCompare();
+    }
+
+    function openCompare() {
+      let html = '<table><tr><th></th>';
+      compareList.forEach((id, i) => {
+        const p = data.find(d => d.id === id);
+        html += `<th>${p.title} ${i + 1}</th>`;
+      });
+      html += '</tr>';
+      [
+        ['Couleur','color'],
+        ['Expédié','delivery'],
+        ['Dimensions','heightWidthDepth'],
+        ['Poids','weight'],
+        ['Énergie','energy'],
+        ['Consommation','consumption'],
+        ['Condition','newOrUsed'],
+        ['Prix','price']
+      ].forEach(([lbl, key]) => {
+        html += `<tr><td>${lbl}</td>` +
+          compareList.map(id => {
+            const p = data.find(d => d.id === id);
+            let v;
+            if (key === 'heightWidthDepth') v = `${p.height}×${p.width}×${p.depth} cm`;
+            else if (key === 'consumption') v = `${p.consumption} kWh`;
+            else if (key === 'price') v = `${p.price} €`;
+            else v = p[key];
+            return `<td>${v}</td>`;
+          }).join('') +
+          '</tr>';
+      });
+      html += '</table>';
+      compareContentDiv.innerHTML = html;
+      comparePanel.classList.add('open');
+    }
+
+    compareCloseBtn.onclick = () => comparePanel.classList.remove('open');
+
+    function addToBasket(id) {
+      const index = basketList.findIndex(b => b.id === id);
+      if (index === -1) {
+        basketList.push({ id: id, qty: 1 });
+      } else {
+        basketList[index].qty++;
+      }
+      renderBasket();
+    }
+
+    function removeFromBasket(id) {
+      basketList = basketList.filter(b => b.id !== id);
+      renderBasket();
+    }
+
+    function renderBasket() {
+      basketItemsEl.innerHTML = '';
+      if (basketList.length === 0) {
+        basketItemsEl.innerHTML = `<div class="empty-basket"><i class="fas fa-shopping-basket"></i><br />Votre panier est vide</div>`;
+        basketTotalEl.textContent = 'Total : 0 €';
+        return;
+      }
+      let total = 0;
+      basketList.forEach(item => {
+        const p = data.find(d => d.id === item.id);
+        total += p.price * item.qty;
+        const div = document.createElement('div');
+        div.className = 'basket-item';
+
+        div.innerHTML = `
+          <img alt="Miniature" src="https://via.placeholder.com/50x40.png?text=${p.id}" />
+          <div class="item-info">${p.brand} ${p.title}</div>
+
+          <div class="qty-controls" data-id="${p.id}">
+            ${ item.qty > 1
+              ? `<button class="qty-minus">−</button>`
+              : `<button class="remove-btn">🗑</button>`
+            }
+            <input type="text" value="${item.qty}" readonly />
+            <button class="qty-plus">+</button>
+          </div>
+        `;
+        const qtyControls = div.querySelector('.qty-controls');
+        if (item.qty > 1) {
+          qtyControls.querySelector('.qty-minus').onclick = () => {
+            item.qty--;
+            renderBasket();
+          };
+        } else {
+          qtyControls.querySelector('.remove-btn').onclick = () => {
+            removeFromBasket(p.id);
+          };
+        }
+        qtyControls.querySelector('.qty-plus').onclick = () => {
+          item.qty++;
+          renderBasket();
+        };
+        basketItemsEl.append(div);
+      });
+      basketTotalEl.textContent = `Total : ${total} €`;
+    }
+
+    fastBtn.onclick = () => {
+      filterFast.checked = !filterFast.checked;
+      fastBtn.classList.toggle('btn-active');
+      renderProducts();
+    };
+
+    // Toggle panels filtres & panier pour petit écran
+    showFiltersBtn.onclick = () => {
+      filtersPanel.style.display =
+        filtersPanel.style.display === 'block' ? 'none' : 'block';
+    };
+    showBasketBtn.onclick = () => {
+      basketPanel.style.display =
+        basketPanel.style.display === 'block' ? 'none' : 'block';
+    };
+
+    [
+      filterInstock,
+      filterFast,
+      filterBrandA,
+      filterBrandB,
+      filterBrandC,
+      filterPriceMin,
+      filterPriceMax,
+      filterNew,
+      filterUsed,
+      filterHeightMin,
+      filterHeightMax,
+      filterWidthMin,
+      filterWidthMax,
+      filterDepthMin,
+      filterDepthMax,
+      filterWeightMin,
+      filterWeightMax,
+      filterEnergy
+    ].forEach(el => el.onchange = renderProducts);
+    filterColors.forEach(ch => ch.onchange = renderProducts);
+
+    // **Gestionnaire pour “Voir la sélection”**
+    showSelectionBtn.addEventListener('click', () => {
+      // 1) Coche le filtre “Livraison sous 48 h”
+      filterFast.checked = true;
+      // 2) Ajoute la classe btn-active au bouton “Livraison sous 48 h”
+      fastBtn.classList.add('btn-active');
+      // 3) Relance le rendu des produits
+      renderProducts();
+      // 4) Scroll jusqu’à la section produits
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // **Gestionnaire pour le bouton “Payer” (tout le panier)**
+    payAllBtn.onclick = () => {
+      // Calcule le total actuel
+      let total = 0;
+      basketList.forEach(item => {
+        const p = data.find(d => d.id === item.id);
+        total += p.price * item.qty;
+      });
+      if (total > 0) {
+        alert(`Vous allez payer ${total} € pour l'ensemble du panier.`);
+      } else {
+        alert('Votre panier est vide.');
+      }
+    };
+
+    // Initial
+    renderProducts();
+    renderBasket();
+  </script>
+</body>
+</html>
